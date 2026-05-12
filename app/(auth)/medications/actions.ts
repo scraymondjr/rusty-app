@@ -12,16 +12,34 @@ import {
 export async function saveMedication(formData: FormData) {
   await requireRole(['owner', 'vet'])
 
-  const id = formData.get('id') as string | null
+  const id   = formData.get('id') as string | null
+  const name = (formData.get('name') as string)?.trim()
+  const dose = (formData.get('dose') as string)?.trim()
+  const frequency = (formData.get('frequency') as string)?.trim()
+
+  if (!name) throw new Error('Medication name is required.')
+  if (!dose) throw new Error('Dose is required.')
+  if (!frequency) throw new Error('Frequency is required.')
+
+  const refillsRaw = formData.get('refillsRemaining')
+  const refillsRemaining = refillsRaw ? Number(refillsRaw) : undefined
+  if (refillsRemaining !== undefined && (isNaN(refillsRemaining) || refillsRemaining < 0)) {
+    throw new Error('Refills remaining must be 0 or more.')
+  }
+
+  const fillDate = (formData.get('fillDate') as string) || undefined
+  if (fillDate && isNaN(new Date(fillDate).getTime())) {
+    throw new Error('Invalid fill date.')
+  }
 
   const data = {
-    name:              formData.get('name') as string,
-    dose:              formData.get('dose') as string,
-    frequency:         formData.get('frequency') as string,
+    name,
+    dose,
+    frequency,
     withFood:          formData.get('withFood') === 'true',
-    fillDate:          (formData.get('fillDate') as string) || undefined,
-    refillsRemaining:  formData.get('refillsRemaining') ? Number(formData.get('refillsRemaining')) : undefined,
-    instructions:      (formData.get('instructions') as string) || undefined,
+    fillDate,
+    refillsRemaining,
+    instructions:      (formData.get('instructions') as string)?.trim() || undefined,
     active:            formData.get('active') !== 'false',
     sourceArtifact:    (formData.get('sourceArtifact') as string) || undefined,
     prescribedAtRecordId: (formData.get('prescribedAtRecordId') as string) || undefined,

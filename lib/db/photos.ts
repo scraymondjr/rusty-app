@@ -14,7 +14,7 @@ export async function getPhotos(publicOnly = false): Promise<Photo[]> {
       return {
         id: doc.id,
         storageRef: d.storageRef ?? '',
-        storageUrl: d.storageRef ? await getSignedUrl(d.storageRef).catch(() => undefined) : undefined,
+        storageUrl: d.storageRef ? await getSignedUrl(d.storageRef).catch((err) => { console.error('signed URL failed for photo:', err); return undefined; }) : undefined,
         caption: d.caption,
         isPublic: d.isPublic ?? false,
         source: d.source ?? 'manual',

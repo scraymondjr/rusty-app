@@ -5,11 +5,14 @@ import type { WeightEntry } from '@/types/db'
 
 export async function getWeightEntries(): Promise<WeightEntry[]> {
   const snap = await dogRef().collection('weight_entries').orderBy('date', 'desc').get()
-  return snap.docs.map((doc) => ({
-    id: doc.id,
-    date: doc.data().date ?? '',
-    weightLbs: doc.data().weightLbs ?? 0,
-  }))
+  return snap.docs.map((doc) => {
+    const d = doc.data()
+    return {
+      id: doc.id,
+      date: d.date ?? '',
+      weightLbs: d.weightLbs ?? 0,
+    }
+  })
 }
 
 export async function addWeightEntry(data: Omit<WeightEntry, 'id'>): Promise<string> {

@@ -57,7 +57,7 @@ export function EmergencyContactsList({ contacts }: { contacts: EmergencyContact
           </div>
           <div className="flex gap-2">
             <button type="submit" disabled={saving}
-              className="bg-brand-600 text-white rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-brand-700 disabled:opacity-60">
+              className="bg-brand-600 text-white rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-brand-700 disabled:opacity-60 disabled:cursor-not-allowed">
               {saving ? 'Adding…' : 'Add'}
             </button>
             <button type="button" onClick={() => setAdding(false)}

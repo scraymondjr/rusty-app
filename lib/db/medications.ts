@@ -29,8 +29,9 @@ export async function getMedications(activeOnly = false): Promise<Medication[]> 
   const snap = await query.get()
   return Promise.all(
     snap.docs.map(async (doc) => {
-      const url = doc.data().sourceArtifact
-        ? await getSignedUrl(doc.data().sourceArtifact).catch(() => undefined)
+      const d = doc.data()
+      const url = d.sourceArtifact
+        ? await getSignedUrl(d.sourceArtifact).catch((err) => { console.error('signed URL failed for medication:', err); return undefined; })
         : undefined
       return docToMedication(doc, url)
     }),
@@ -40,8 +41,9 @@ export async function getMedications(activeOnly = false): Promise<Medication[]> 
 export async function getMedication(id: string): Promise<Medication | null> {
   const doc = await dogRef().collection('medications').doc(id).get()
   if (!doc.exists) return null
-  const url = doc.data()?.sourceArtifact
-    ? await getSignedUrl(doc.data()!.sourceArtifact).catch(() => undefined)
+  const d = doc.data()!
+  const url = d.sourceArtifact
+    ? await getSignedUrl(d.sourceArtifact).catch((err) => { console.error('signed URL failed for medication:', err); return undefined; })
     : undefined
   return docToMedication(doc, url)
 }

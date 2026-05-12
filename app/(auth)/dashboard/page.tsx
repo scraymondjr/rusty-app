@@ -7,14 +7,14 @@ import { countActiveMedications, getMedications } from '@/lib/db/medications'
 
 export const metadata: Metadata = { title: 'Dashboard' }
 
-const featureCards = [
-  { href: '/medical',         label: 'Medical Records',   icon: '🏥', desc: 'Visits, vaccinations, weight' },
-  { href: '/medications',     label: 'Medications',       icon: '💊', desc: 'Active prescriptions' },
-  { href: '/insurance',       label: 'Insurance',         icon: '🛡️', desc: 'Policy & claims' },
-  { href: '/care',            label: 'Care Instructions', icon: '📋', desc: 'Feeding, walks, quirks' },
-  { href: '/photos',          label: 'Photos',            icon: '📷', desc: 'Gallery & public page' },
-  { href: '/activity',        label: 'Activity Log',      icon: '📓', desc: 'Care entries' },
-  { href: '/settings/access', label: 'Access',            icon: '👥', desc: 'Invite & manage people' },
+const ALL_FEATURE_CARDS = [
+  { href: '/medical',         label: 'Medical Records',   icon: '🏥', desc: 'Visits, vaccinations, weight',  roles: ['owner', 'family', 'vet'] },
+  { href: '/medications',     label: 'Medications',       icon: '💊', desc: 'Active prescriptions',          roles: ['owner', 'family', 'vet', 'sitter'] },
+  { href: '/insurance',       label: 'Insurance',         icon: '🛡️', desc: 'Policy & claims',               roles: ['owner', 'family'] },
+  { href: '/care',            label: 'Care Instructions', icon: '📋', desc: 'Feeding, walks, quirks',        roles: ['owner', 'family', 'vet', 'sitter'] },
+  { href: '/photos',          label: 'Photos',            icon: '📷', desc: 'Gallery & public page',         roles: ['owner', 'family', 'vet', 'sitter'] },
+  { href: '/activity',        label: 'Activity Log',      icon: '📓', desc: 'Care entries',                  roles: ['owner', 'family', 'vet', 'sitter'] },
+  { href: '/settings/access', label: 'Access',            icon: '👥', desc: 'Invite & manage people',        roles: ['owner'] },
 ]
 
 export default async function DashboardPage() {
@@ -25,7 +25,13 @@ export default async function DashboardPage() {
     getMedications(true).catch(() => []),
   ])
 
-  const nextRefill = activeMeds.find((m) => m.refillsRemaining === 0)
+  const featureCards = ALL_FEATURE_CARDS.filter((c) =>
+    session ? c.roles.includes(session.role) : false,
+  )
+
+  const nextRefill = activeMeds.find(
+    (m) => m.refillsRemaining !== undefined && m.refillsRemaining <= 2,
+  )
 
   const metrics = [
     {
@@ -45,9 +51,11 @@ export default async function DashboardPage() {
       href: '/medications',
     },
     {
-      label: 'Refill Needed',
+      label: 'Refills',
       value: nextRefill ? '⚠' : '✓',
-      sub: nextRefill ? nextRefill.name : 'All stocked',
+      sub: nextRefill
+        ? `${nextRefill.name}${nextRefill.refillsRemaining === 0 ? ' — none left' : ` — ${nextRefill.refillsRemaining} left`}`
+        : 'All stocked',
       icon: '📦',
       href: '/medications',
       alert: !!nextRefill,
@@ -72,7 +80,7 @@ export default async function DashboardPage() {
     <div className="flex-1 max-w-5xl mx-auto w-full px-4 py-6 pb-24 md:pb-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">
             {session?.name ? `Hi, ${session.name.split(' ')[0]}` : "Rusty's Dashboard"}
           </h1>
           <p className="text-sm text-gray-500 mt-0.5">
@@ -92,7 +100,7 @@ export default async function DashboardPage() {
             <Link
               key={card.label}
               href={card.href}
-              className={`bg-white rounded-xl border p-4 flex flex-col gap-1 hover:shadow-sm transition-all ${
+              className={`bg-white rounded-xl border p-4 flex flex-col gap-1 hover:shadow-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
                 card.alert ? 'border-amber-300 bg-amber-50' : 'border-gray-200'
               }`}
             >
@@ -114,7 +122,7 @@ export default async function DashboardPage() {
             <Link
               key={card.href}
               href={card.href}
-              className="bg-white rounded-xl border border-gray-200 p-4 hover:border-brand-300 hover:shadow-sm transition-all group"
+              className="bg-white rounded-xl border border-gray-200 p-4 hover:border-brand-300 hover:shadow-sm transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
             >
               <span className="text-2xl block mb-2">{card.icon}</span>
               <span className="text-sm font-semibold text-gray-800 group-hover:text-brand-700 block">{card.label}</span>

@@ -24,7 +24,7 @@ export async function getMedicalRecords(): Promise<MedicalRecord[]> {
         followUp: d.followUp,
         notes: d.notes,
         sourceArtifact: d.sourceArtifact,
-        sourceArtifactUrl: d.sourceArtifact ? await getSignedUrl(d.sourceArtifact).catch(() => undefined) : undefined,
+        sourceArtifactUrl: d.sourceArtifact ? await getSignedUrl(d.sourceArtifact).catch((err) => { console.error('signed URL failed for medical record:', err); return undefined; }) : undefined,
         linkedMedicationIds: d.linkedMedicationIds ?? [],
         createdAt: toISO(d.createdAt),
       } satisfies MedicalRecord
@@ -47,7 +47,7 @@ export async function getMedicalRecord(id: string): Promise<MedicalRecord | null
     followUp: d.followUp,
     notes: d.notes,
     sourceArtifact: d.sourceArtifact,
-    sourceArtifactUrl: d.sourceArtifact ? await getSignedUrl(d.sourceArtifact).catch(() => undefined) : undefined,
+    sourceArtifactUrl: d.sourceArtifact ? await getSignedUrl(d.sourceArtifact).catch((err) => { console.error('signed URL failed for medical record:', err); return undefined; }) : undefined,
     linkedMedicationIds: d.linkedMedicationIds ?? [],
     createdAt: toISO(d.createdAt),
   }
@@ -95,7 +95,7 @@ export async function getLatestMedicalRecord(): Promise<MedicalRecord | null> {
     followUp: d.followUp,
     notes: d.notes,
     sourceArtifact: d.sourceArtifact,
-    sourceArtifactUrl: d.sourceArtifact ? await getSignedUrl(d.sourceArtifact).catch(() => undefined) : undefined,
+    sourceArtifactUrl: d.sourceArtifact ? await getSignedUrl(d.sourceArtifact).catch((err) => { console.error('signed URL failed for medical record:', err); return undefined; }) : undefined,
     linkedMedicationIds: d.linkedMedicationIds ?? [],
     createdAt: toISO(d.createdAt),
   }

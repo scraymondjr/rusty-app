@@ -55,7 +55,7 @@ export function SignInButton() {
         className="flex items-center gap-3 bg-white border border-gray-300 rounded-lg px-6 py-3 text-gray-700 font-medium shadow-sm hover:shadow-md hover:bg-gray-50 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {loading ? (
-          <span className="w-5 h-5 border-2 border-gray-300 border-t-brand-600 rounded-full animate-spin" />
+          <span className="w-5 h-5 border-2 border-gray-300 border-t-brand-600 rounded-full animate-spin" role="status" aria-label="Signing in" />
         ) : (
           <GoogleIcon />
         )}

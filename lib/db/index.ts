@@ -5,7 +5,11 @@ import { getAdminDb } from '@/lib/firebase/admin'
 export const DOG_ID = 'rusty'
 
 export function toISO(ts: Timestamp | undefined | null): string {
-  return ts?.toDate().toISOString() ?? new Date().toISOString()
+  if (!ts) {
+    console.warn('toISO: missing timestamp — Firestore doc may not have been written with FieldValue.serverTimestamp()')
+    return ''
+  }
+  return ts.toDate().toISOString()
 }
 
 export function dogRef() {

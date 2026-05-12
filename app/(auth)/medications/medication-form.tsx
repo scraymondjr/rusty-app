@@ -184,7 +184,7 @@ export function MedicationForm({ initialData }: Props) {
           <button
             type="submit"
             disabled={uploading}
-            className="bg-brand-600 text-white rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-brand-700 disabled:opacity-60 transition-colors"
+            className="bg-brand-600 text-white rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-brand-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
           >
             {uploading ? 'Saving…' : isEditing ? 'Save Changes' : 'Save Medication'}
           </button>

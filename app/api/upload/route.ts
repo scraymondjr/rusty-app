@@ -27,8 +27,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'file_too_large' }, { status: 400 })
   }
 
-  // Prevent path traversal
-  if (path.includes('..') || !path.startsWith(`dogs/`)) {
+  // Prevent path traversal and writes to unrecognized dogs
+  if (path.includes('..') || !path.startsWith('dogs/rusty/')) {
     return NextResponse.json({ error: 'invalid_path' }, { status: 400 })
   }
 

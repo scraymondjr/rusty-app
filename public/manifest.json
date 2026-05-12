@@ -2,11 +2,12 @@
   "name": "Rusty",
   "short_name": "Rusty",
   "description": "Rusty's care dashboard",
-  "start_url": "/",
+  "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#d97706",
   "orientation": "portrait-primary",
+  "categories": ["health", "lifestyle"],
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -19,6 +20,26 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Log Activity",
+      "short_name": "Log",
+      "url": "/activity",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Medications",
+      "short_name": "Meds",
+      "url": "/medications",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Medical Records",
+      "short_name": "Medical",
+      "url": "/medical",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
