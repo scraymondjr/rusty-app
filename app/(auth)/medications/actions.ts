@@ -40,6 +40,7 @@ export async function saveMedication(formData: FormData) {
   }
 
   revalidatePath('/medications')
+  revalidatePath('/dashboard')
   redirect('/medications')
 }
 
@@ -49,6 +50,7 @@ export async function toggleMedicationActive(id: string, active: boolean) {
   requireRole(session.role)
   await updateMedication(id, { active })
   revalidatePath('/medications')
+  revalidatePath('/dashboard')
 }
 
 export async function removeMedication(id: string) {
@@ -57,5 +59,6 @@ export async function removeMedication(id: string) {
   requireRole(session.role)
   await deleteMedication(id)
   revalidatePath('/medications')
+  revalidatePath('/dashboard')
   redirect('/medications')
 }

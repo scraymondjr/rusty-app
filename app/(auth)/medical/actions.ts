@@ -41,12 +41,12 @@ export async function saveMedicalRecord(formData: FormData) {
 
   if (id) {
     await updateMedicalRecord(id, data)
-    revalidatePath('/medical')
   } else {
     await createMedicalRecord(data)
-    revalidatePath('/medical')
   }
 
+  revalidatePath('/medical')
+  revalidatePath('/dashboard')
   redirect('/medical')
 }
 
@@ -56,5 +56,6 @@ export async function removeMedicalRecord(id: string) {
   requireRole(session.role)
   await deleteMedicalRecord(id)
   revalidatePath('/medical')
+  revalidatePath('/dashboard')
   redirect('/medical')
 }

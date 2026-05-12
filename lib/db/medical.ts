@@ -95,6 +95,7 @@ export async function getLatestMedicalRecord(): Promise<MedicalRecord | null> {
     followUp: d.followUp,
     notes: d.notes,
     sourceArtifact: d.sourceArtifact,
+    sourceArtifactUrl: d.sourceArtifact ? await getSignedUrl(d.sourceArtifact).catch(() => undefined) : undefined,
     linkedMedicationIds: d.linkedMedicationIds ?? [],
     createdAt: toISO(d.createdAt),
   }
