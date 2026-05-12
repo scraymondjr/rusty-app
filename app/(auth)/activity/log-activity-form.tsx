@@ -23,15 +23,21 @@ export function LogActivityForm() {
     <form ref={formRef} action={handleAction}
       className="bg-white rounded-xl border border-gray-200 p-5 space-y-3">
       <h2 className="text-sm font-semibold text-gray-700">Log Activity</h2>
-      <select name="type" className={inputClass}>
-        <option value="note">Note</option>
-        <option value="feeding">Feeding</option>
-        <option value="walk">Walk</option>
-        <option value="medication">Medication given</option>
-        <option value="grooming">Grooming</option>
-        <option value="incident">Incident</option>
-      </select>
-      <textarea name="content" required rows={3} placeholder="What happened?" className={inputClass} />
+      <div>
+        <label htmlFor="activity-type" className="block text-xs font-medium text-gray-700 mb-1">Activity Type</label>
+        <select id="activity-type" name="type" className={inputClass}>
+          <option value="note">Note</option>
+          <option value="feeding">Feeding</option>
+          <option value="walk">Walk</option>
+          <option value="medication">Medication given</option>
+          <option value="grooming">Grooming</option>
+          <option value="incident">Incident</option>
+        </select>
+      </div>
+      <div>
+        <label htmlFor="activity-content" className="block text-xs font-medium text-gray-700 mb-1">Details</label>
+        <textarea id="activity-content" name="content" required rows={3} placeholder="What happened?" className={inputClass} />
+      </div>
       <button type="submit" disabled={saving}
         className="bg-brand-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-brand-700 disabled:opacity-60 transition-colors">
         {saving ? 'Logging…' : 'Add Entry'}

@@ -2,13 +2,12 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { getSession } from '@/lib/auth/session'
+import { requireRole } from '@/lib/auth/authorize'
 import { addPhoto, updatePhoto, deletePhoto } from '@/lib/db/photos'
 import { deleteStorageFile } from '@/lib/storage'
 
 export async function savePhoto(formData: FormData) {
-  const session = await getSession()
-  if (!session || !['owner', 'family'].includes(session.role)) throw new Error('Unauthorized')
+  await requireRole(['owner', 'family'])
 
   await addPhoto({
     storageRef: formData.get('storageRef') as string,
@@ -22,8 +21,7 @@ export async function savePhoto(formData: FormData) {
 }
 
 export async function editPhoto(id: string, formData: FormData) {
-  const session = await getSession()
-  if (!session || !['owner', 'family'].includes(session.role)) throw new Error('Unauthorized')
+  await requireRole(['owner', 'family'])
 
   await updatePhoto(id, {
     caption:  (formData.get('caption') as string) || undefined,
@@ -34,8 +32,7 @@ export async function editPhoto(id: string, formData: FormData) {
 }
 
 export async function removePhoto(id: string, storageRef: string) {
-  const session = await getSession()
-  if (!session || !['owner', 'family'].includes(session.role)) throw new Error('Unauthorized')
+  await requireRole(['owner', 'family'])
 
   await deletePhoto(id)
   if (storageRef) await deleteStorageFile(storageRef).catch(() => {})

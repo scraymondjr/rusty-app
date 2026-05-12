@@ -92,12 +92,12 @@ export function Nav() {
       )}
 
       {/* Mobile bottom bar (quick access to first 4 items) */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-200 flex">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-200 flex pb-safe">
         {mobileItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className={`flex-1 flex flex-col items-center py-2 text-xs font-medium transition-colors ${
+            className={`flex-1 flex flex-col items-center py-3 text-xs font-medium transition-colors ${
               isActive(item.href) ? 'text-brand-700' : 'text-gray-500'
             }`}
           >

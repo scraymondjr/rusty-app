@@ -25,28 +25,28 @@ export function CareForm({ initialData }: { initialData: CareInstructions | null
   return (
     <form action={handleAction} className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
       <div>
-        <label className={labelClass}>Feeding</label>
-        <textarea name="feeding" rows={3} defaultValue={initialData?.feeding ?? ''}
+        <label htmlFor="care-feeding" className={labelClass}>Feeding</label>
+        <textarea id="care-feeding" name="feeding" rows={3} defaultValue={initialData?.feeding ?? ''}
           placeholder="e.g. 1 cup kibble in the morning, 1 cup at dinner. Always has access to water." className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Walks</label>
-        <textarea name="walks" rows={2} defaultValue={initialData?.walks ?? ''}
+        <label htmlFor="care-walks" className={labelClass}>Walks</label>
+        <textarea id="care-walks" name="walks" rows={2} defaultValue={initialData?.walks ?? ''}
           placeholder="e.g. 30 min walk morning and evening. Avoid hot pavement." className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Quirks &amp; Behavior</label>
-        <textarea name="quirks" rows={3} defaultValue={initialData?.quirks ?? ''}
+        <label htmlFor="care-quirks" className={labelClass}>Quirks &amp; Behavior</label>
+        <textarea id="care-quirks" name="quirks" rows={3} defaultValue={initialData?.quirks ?? ''}
           placeholder="e.g. Afraid of thunderstorms. Loves the green ball. Don't let him eat grass." className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Where Things Are</label>
-        <textarea name="whereThingsAre" rows={3} defaultValue={initialData?.whereThingsAre ?? ''}
+        <label htmlFor="care-whereThingsAre" className={labelClass}>Where Things Are</label>
+        <textarea id="care-whereThingsAre" name="whereThingsAre" rows={3} defaultValue={initialData?.whereThingsAre ?? ''}
           placeholder="e.g. Food in pantry, leash on hook by door, meds in bathroom cabinet." className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Notes</label>
-        <textarea name="notes" rows={2} defaultValue={initialData?.notes ?? ''}
+        <label htmlFor="care-notes" className={labelClass}>Notes</label>
+        <textarea id="care-notes" name="notes" rows={2} defaultValue={initialData?.notes ?? ''}
           placeholder="Anything else a sitter should know." className={inputClass} />
       </div>
       <div className="flex items-center gap-3">

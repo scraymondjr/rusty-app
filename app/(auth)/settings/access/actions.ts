@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { getSession } from '@/lib/auth/session'
+import { requireRole } from '@/lib/auth/authorize'
 import { getAdminDb } from '@/lib/firebase/admin'
 import { sendInviteEmail } from '@/lib/email/invite'
 import { FieldValue } from 'firebase-admin/firestore'
@@ -9,14 +9,8 @@ import type { AccessRole } from '@/types'
 
 const VALID_ROLES: AccessRole[] = ['family', 'vet', 'sitter', 'owner']
 
-async function requireOwner() {
-  const session = await getSession()
-  if (session?.role !== 'owner') throw new Error('Unauthorized')
-  return session
-}
-
 export async function inviteUser(email: string, role: AccessRole) {
-  await requireOwner()
+  await requireRole(['owner'])
 
   if (!email || !VALID_ROLES.includes(role)) throw new Error('Invalid input')
   const normalised = email.toLowerCase().trim()
@@ -32,7 +26,7 @@ export async function inviteUser(email: string, role: AccessRole) {
 }
 
 export async function revokeUser(email: string) {
-  const session = await requireOwner()
+  const session = await requireRole(['owner'])
 
   // Prevent owner from revoking themselves
   if (email === session.email) throw new Error('Cannot revoke your own access')
@@ -43,7 +37,7 @@ export async function revokeUser(email: string) {
 }
 
 export async function updateUserRole(email: string, role: AccessRole) {
-  const session = await requireOwner()
+  const session = await requireRole(['owner'])
 
   if (!VALID_ROLES.includes(role)) throw new Error('Invalid role')
 

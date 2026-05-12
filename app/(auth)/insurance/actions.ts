@@ -2,21 +2,15 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { getSession } from '@/lib/auth/session'
+import { requireRole } from '@/lib/auth/authorize'
 import {
   createInsurancePolicy,
   updateInsurancePolicy,
   deleteInsurancePolicy,
 } from '@/lib/db/insurance'
 
-function requireOwner(role: string) {
-  if (role !== 'owner') throw new Error('Unauthorized')
-}
-
 export async function saveInsurancePolicy(formData: FormData) {
-  const session = await getSession()
-  if (!session) throw new Error('Unauthorized')
-  requireOwner(session.role)
+  await requireRole(['owner'])
 
   const id = formData.get('id') as string | null
 
@@ -37,9 +31,7 @@ export async function saveInsurancePolicy(formData: FormData) {
 }
 
 export async function removeInsurancePolicy(id: string) {
-  const session = await getSession()
-  if (!session) throw new Error('Unauthorized')
-  requireOwner(session.role)
+  await requireRole(['owner'])
   await deleteInsurancePolicy(id)
   revalidatePath('/insurance')
   redirect('/insurance')

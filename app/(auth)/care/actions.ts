@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { getSession } from '@/lib/auth/session'
+import { requireRole } from '@/lib/auth/authorize'
 import { saveCareInstructions } from '@/lib/db/care'
 import {
   createEmergencyContact,
@@ -10,8 +10,7 @@ import {
 } from '@/lib/db/emergency-contacts'
 
 export async function updateCareInstructions(formData: FormData) {
-  const session = await getSession()
-  if (!session || !['owner', 'family'].includes(session.role)) throw new Error('Unauthorized')
+  await requireRole(['owner', 'family'])
 
   await saveCareInstructions({
     feeding:        formData.get('feeding') as string,
@@ -25,8 +24,7 @@ export async function updateCareInstructions(formData: FormData) {
 }
 
 export async function addEmergencyContact(formData: FormData) {
-  const session = await getSession()
-  if (!session || session.role !== 'owner') throw new Error('Unauthorized')
+  await requireRole(['owner'])
 
   await createEmergencyContact({
     name:     formData.get('name') as string,
@@ -39,8 +37,7 @@ export async function addEmergencyContact(formData: FormData) {
 }
 
 export async function editEmergencyContact(id: string, formData: FormData) {
-  const session = await getSession()
-  if (!session || session.role !== 'owner') throw new Error('Unauthorized')
+  await requireRole(['owner'])
 
   await updateEmergencyContact(id, {
     name:     formData.get('name') as string,
@@ -53,8 +50,7 @@ export async function editEmergencyContact(id: string, formData: FormData) {
 }
 
 export async function removeEmergencyContact(id: string) {
-  const session = await getSession()
-  if (!session || session.role !== 'owner') throw new Error('Unauthorized')
+  await requireRole(['owner'])
   await deleteEmergencyContact(id)
   revalidatePath('/care')
 }

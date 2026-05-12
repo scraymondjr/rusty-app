@@ -15,7 +15,7 @@ export function PageShell({ title, backHref, action, children }: PageShellProps)
           {backHref && (
             <Link
               href={backHref}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="p-2 -ml-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
               aria-label="Back"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

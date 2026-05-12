@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { getSession } from '@/lib/auth/session'
+import { requireRole } from '@/lib/auth/authorize'
 import {
   createMedicalRecord,
   updateMedicalRecord,
@@ -10,14 +10,8 @@ import {
 } from '@/lib/db/medical'
 import { addWeightEntry } from '@/lib/db/weight'
 
-function requireRole(role: string) {
-  if (!['owner', 'vet'].includes(role)) throw new Error('Unauthorized')
-}
-
 export async function saveMedicalRecord(formData: FormData) {
-  const session = await getSession()
-  if (!session) throw new Error('Unauthorized')
-  requireRole(session.role)
+  const session = await requireRole(['owner', 'vet'])
 
   const id = formData.get('id') as string | null
   const weight = formData.get('weight') ? Number(formData.get('weight')) : undefined
@@ -51,9 +45,7 @@ export async function saveMedicalRecord(formData: FormData) {
 }
 
 export async function removeMedicalRecord(id: string) {
-  const session = await getSession()
-  if (!session) throw new Error('Unauthorized')
-  requireRole(session.role)
+  await requireRole(['owner', 'vet'])
   await deleteMedicalRecord(id)
   revalidatePath('/medical')
   revalidatePath('/dashboard')

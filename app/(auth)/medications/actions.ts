@@ -2,21 +2,15 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { getSession } from '@/lib/auth/session'
+import { requireRole } from '@/lib/auth/authorize'
 import {
   createMedication,
   updateMedication,
   deleteMedication,
 } from '@/lib/db/medications'
 
-function requireRole(role: string) {
-  if (!['owner', 'vet'].includes(role)) throw new Error('Unauthorized')
-}
-
 export async function saveMedication(formData: FormData) {
-  const session = await getSession()
-  if (!session) throw new Error('Unauthorized')
-  requireRole(session.role)
+  await requireRole(['owner', 'vet'])
 
   const id = formData.get('id') as string | null
 
@@ -45,18 +39,14 @@ export async function saveMedication(formData: FormData) {
 }
 
 export async function toggleMedicationActive(id: string, active: boolean) {
-  const session = await getSession()
-  if (!session) throw new Error('Unauthorized')
-  requireRole(session.role)
+  await requireRole(['owner', 'vet'])
   await updateMedication(id, { active })
   revalidatePath('/medications')
   revalidatePath('/dashboard')
 }
 
 export async function removeMedication(id: string) {
-  const session = await getSession()
-  if (!session) throw new Error('Unauthorized')
-  requireRole(session.role)
+  await requireRole(['owner', 'vet'])
   await deleteMedication(id)
   revalidatePath('/medications')
   revalidatePath('/dashboard')
