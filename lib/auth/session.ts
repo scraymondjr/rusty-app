@@ -1,6 +1,6 @@
 import 'server-only'
 import { cookies } from 'next/headers'
-import { adminAuth, adminDb } from '@/lib/firebase/admin'
+import { getAdminAuth, getAdminDb } from '@/lib/firebase/admin'
 import type { AccessRecord, SessionUser } from '@/types'
 
 const SESSION_COOKIE_NAME = '__session'
@@ -8,7 +8,7 @@ const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 5 // 5 days
 
 export async function createSession(idToken: string): Promise<void> {
   const expiresIn = SESSION_MAX_AGE_SECONDS * 1000
-  const sessionCookie = await adminAuth.createSessionCookie(idToken, { expiresIn })
+  const sessionCookie = await getAdminAuth().createSessionCookie(idToken, { expiresIn })
 
   const cookieStore = await cookies()
   cookieStore.set(SESSION_COOKIE_NAME, sessionCookie, {
@@ -28,7 +28,7 @@ export async function getSession(): Promise<(SessionUser & { uid: string }) | nu
   if (!sessionCookie) return null
 
   try {
-    const decoded = await adminAuth.verifySessionCookie(sessionCookie, true)
+    const decoded = await getAdminAuth().verifySessionCookie(sessionCookie, true)
     const access = await getAccessRecord(decoded.email!)
     if (!access) return null
     return {
@@ -49,8 +49,8 @@ export async function clearSession(): Promise<void> {
 
   if (sessionCookie) {
     try {
-      const decoded = await adminAuth.verifySessionCookie(sessionCookie)
-      await adminAuth.revokeRefreshTokens(decoded.sub)
+      const decoded = await getAdminAuth().verifySessionCookie(sessionCookie)
+      await getAdminAuth().revokeRefreshTokens(decoded.sub)
     } catch {
       // Cookie already invalid — proceed to delete
     }
@@ -60,7 +60,7 @@ export async function clearSession(): Promise<void> {
 }
 
 export async function getAccessRecord(email: string): Promise<AccessRecord | null> {
-  const doc = await adminDb.collection('access').doc(email).get()
+  const doc = await getAdminDb().collection('access').doc(email).get()
   if (!doc.exists) return null
   return doc.data() as AccessRecord
 }

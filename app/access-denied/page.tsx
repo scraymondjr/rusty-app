@@ -3,12 +3,12 @@ import Link from 'next/link'
 
 export const metadata: Metadata = { title: 'Access Denied' }
 
-export default function AccessDeniedPage({
+export default async function AccessDeniedPage({
   searchParams,
 }: {
-  searchParams: { email?: string }
+  searchParams: Promise<{ email?: string }>
 }) {
-  const email = searchParams.email ?? ''
+  const { email = '' } = await searchParams
   const ownerEmail = process.env.OWNER_EMAIL ?? ''
 
   const mailtoHref = ownerEmail

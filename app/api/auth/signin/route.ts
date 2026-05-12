@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { adminAuth } from '@/lib/firebase/admin'
+import { getAdminAuth } from '@/lib/firebase/admin'
 import { createSession, getAccessRecord } from '@/lib/auth/session'
 
 export async function POST(request: NextRequest) {
@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const decoded = await adminAuth.verifyIdToken(body.idToken)
+    const decoded = await getAdminAuth().verifyIdToken(body.idToken)
 
     if (!decoded.email_verified) {
       return NextResponse.json({ error: 'email_not_verified' }, { status: 403 })
