@@ -20,14 +20,52 @@ service cloud.firestore {
       allow write: if hasAccess(['owner']);
     }
 
-    // ── Phase 2+ rules go here ────────────────────────────────────────────
-    //
-    // match /dogs/{dogId}/medical_records/{recordId} { ... }
-    // match /dogs/{dogId}/medications/{medId}        { ... }
-    // match /dogs/{dogId}/insurance/{policyId}       { ... }
-    // match /dogs/{dogId}/care_instructions/{doc}    { ... }
-    // match /dogs/{dogId}/subscriptions/{subId}      { ... }
-    // match /dogs/{dogId}/photos/{photoId}           { ... }
-    // match /dogs/{dogId}/activity_log/{entryId}     { ... }
+    // ── Phase 2 rules ─────────────────────────────────────────────────────────
+
+    match /dogs/{dogId}/medical_records/{recordId} {
+      allow read:  if hasAccess(['owner', 'family', 'vet']);
+      allow write: if hasAccess(['owner', 'vet']);
+    }
+
+    match /dogs/{dogId}/medications/{medId} {
+      allow read:  if hasAccess(['owner', 'family', 'vet', 'sitter']);
+      allow write: if hasAccess(['owner', 'vet']);
+    }
+
+    match /dogs/{dogId}/weight_entries/{entryId} {
+      allow read:  if hasAccess(['owner', 'family', 'vet']);
+      allow write: if hasAccess(['owner', 'vet']);
+    }
+
+    match /dogs/{dogId}/insurance/{policyId} {
+      allow read:  if hasAccess(['owner', 'family']);
+      allow write: if hasAccess(['owner']);
+    }
+
+    match /dogs/{dogId}/care_instructions/{doc} {
+      allow read:  if hasAccess(['owner', 'family', 'vet', 'sitter']);
+      allow write: if hasAccess(['owner', 'family']);
+    }
+
+    match /dogs/{dogId}/emergency_contacts/{contactId} {
+      allow read:  if hasAccess(['owner', 'family', 'vet', 'sitter']);
+      allow write: if hasAccess(['owner']);
+    }
+
+    match /dogs/{dogId}/photos/{photoId} {
+      // Public photos readable by anyone (for the public landing page — Phase 4)
+      allow read:  if resource.data.isPublic == true || hasAccess(['owner', 'family', 'vet', 'sitter']);
+      allow write: if hasAccess(['owner', 'family']);
+    }
+
+    match /dogs/{dogId}/activity_log/{entryId} {
+      allow read:  if hasAccess(['owner', 'family', 'vet', 'sitter']);
+      allow write: if hasAccess(['owner', 'family', 'vet', 'sitter']);
+    }
+
+    match /dogs/{dogId}/documents/{docId} {
+      allow read:  if hasAccess(['owner', 'family', 'vet']);
+      allow write: if hasAccess(['owner', 'family', 'vet']);
+    }
   }
 }

@@ -1,0 +1,41 @@
+'use client'
+
+import { useRef, useState } from 'react'
+import { logActivity } from './actions'
+
+const inputClass = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent'
+
+export function LogActivityForm() {
+  const formRef = useRef<HTMLFormElement>(null)
+  const [saving, setSaving] = useState(false)
+
+  const handleAction = async (formData: FormData) => {
+    setSaving(true)
+    try {
+      await logActivity(formData)
+      formRef.current?.reset()
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <form ref={formRef} action={handleAction}
+      className="bg-white rounded-xl border border-gray-200 p-5 space-y-3">
+      <h2 className="text-sm font-semibold text-gray-700">Log Activity</h2>
+      <select name="type" className={inputClass}>
+        <option value="note">Note</option>
+        <option value="feeding">Feeding</option>
+        <option value="walk">Walk</option>
+        <option value="medication">Medication given</option>
+        <option value="grooming">Grooming</option>
+        <option value="incident">Incident</option>
+      </select>
+      <textarea name="content" required rows={3} placeholder="What happened?" className={inputClass} />
+      <button type="submit" disabled={saving}
+        className="bg-brand-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-brand-700 disabled:opacity-60 transition-colors">
+        {saving ? 'Logging…' : 'Add Entry'}
+      </button>
+    </form>
+  )
+}
