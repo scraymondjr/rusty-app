@@ -39,6 +39,21 @@ export async function updatePhoto(
   await dogRef().collection('photos').doc(id).update(data)
 }
 
+export async function getPhoto(id: string): Promise<Photo | null> {
+  const doc = await dogRef().collection('photos').doc(id).get()
+  if (!doc.exists) return null
+  const d = doc.data()!
+  return {
+    id: doc.id,
+    storageRef: d.storageRef ?? '',
+    storageUrl: undefined,
+    caption: d.caption,
+    isPublic: d.isPublic ?? false,
+    source: d.source ?? 'manual',
+    addedAt: toISO(d.addedAt),
+  }
+}
+
 export async function deletePhoto(id: string): Promise<void> {
   await dogRef().collection('photos').doc(id).delete()
 }

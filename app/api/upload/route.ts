@@ -5,6 +5,16 @@ import { uploadFile } from '@/lib/storage'
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'application/pdf']
 const MAX_SIZE_BYTES = 20 * 1024 * 1024 // 20 MB
 
+// Strict allowlist: only single filename segment (no slashes) after the known prefix
+const VALID_PATH = /^dogs\/rusty\/(photos|medications|medical)\/[^/]+$/
+
+// Roles allowed to write to each sub-path
+const PATH_ROLES: Record<string, string[]> = {
+  'dogs/rusty/photos/':      ['owner', 'family'],
+  'dogs/rusty/medications/': ['owner', 'vet'],
+  'dogs/rusty/medical/':     ['owner', 'vet'],
+}
+
 export async function POST(request: NextRequest) {
   const session = await getSession()
   if (!session) {
@@ -27,9 +37,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'file_too_large' }, { status: 400 })
   }
 
-  // Prevent path traversal and writes to unrecognized dogs
-  if (path.includes('..') || !path.startsWith('dogs/rusty/')) {
+  // Reject traversal attempts and paths outside the known sub-directories
+  if (!VALID_PATH.test(path)) {
     return NextResponse.json({ error: 'invalid_path' }, { status: 400 })
+  }
+
+  // Enforce role-based write access per storage sub-path
+  const allowedPrefix = Object.keys(PATH_ROLES).find((p) => path.startsWith(p))
+  if (!allowedPrefix || !PATH_ROLES[allowedPrefix].includes(session.role)) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 })
   }
 
   const bytes = await file.arrayBuffer()

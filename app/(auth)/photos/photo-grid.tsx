@@ -24,7 +24,7 @@ export function PhotoGrid({ photos }: { photos: Photo[] }) {
               <button
                 onClick={async () => {
                   if (!confirm('Delete this photo?')) return
-                  await removePhoto(photo.id, photo.storageRef)
+                  await removePhoto(photo.id)
                 }}
                 className="text-xs text-red-300 hover:text-red-100 ml-auto"
               >
