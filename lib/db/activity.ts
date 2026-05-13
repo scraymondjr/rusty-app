@@ -12,6 +12,7 @@ export async function getActivityEntries(limit = 50): Promise<ActivityEntry[]> {
   return snap.docs.map((doc) => ({
     id: doc.id,
     authorEmail: doc.data().authorEmail ?? '',
+    authorName: doc.data().authorName as string | undefined,
     timestamp: toISO(doc.data().timestamp),
     type: doc.data().type ?? 'note',
     content: doc.data().content ?? '',
@@ -21,6 +22,7 @@ export async function getActivityEntries(limit = 50): Promise<ActivityEntry[]> {
 
 export async function addActivityEntry(data: {
   authorEmail: string
+  authorName?: string
   type: string
   content: string
   attachmentRef?: string

@@ -26,13 +26,17 @@ export default async function ActivityPage() {
                     {entry.type}
                   </span>
                   <span className="text-xs text-gray-400">
-                    {new Date(entry.timestamp).toLocaleString('en-US', {
-                      month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
-                    })}
+                    {entry.timestamp
+                      ? new Date(entry.timestamp).toLocaleString('en-US', {
+                          month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+                        })
+                      : '—'}
                   </span>
                 </div>
                 <p className="text-sm text-gray-800 whitespace-pre-wrap">{entry.content}</p>
-                <p className="text-xs text-gray-400 mt-1.5">{entry.authorEmail}</p>
+                <p className="text-xs text-gray-400 mt-1.5">
+                  {entry.authorName ?? entry.authorEmail.split('@')[0]}
+                </p>
               </div>
             ))}
           </div>

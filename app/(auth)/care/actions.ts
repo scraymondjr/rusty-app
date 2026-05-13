@@ -40,16 +40,19 @@ export async function addEmergencyContact(formData: FormData) {
   await requireRole(['owner'])
   await createEmergencyContact(parseContactFields(formData))
   revalidatePath('/care')
+  revalidatePath('/', 'layout')
 }
 
 export async function editEmergencyContact(id: string, formData: FormData) {
   await requireRole(['owner'])
   await updateEmergencyContact(id, parseContactFields(formData))
   revalidatePath('/care')
+  revalidatePath('/', 'layout')
 }
 
 export async function removeEmergencyContact(id: string) {
   await requireRole(['owner'])
   await deleteEmergencyContact(id)
   revalidatePath('/care')
+  revalidatePath('/', 'layout')
 }

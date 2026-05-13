@@ -85,6 +85,7 @@ export interface Photo {
 export interface ActivityEntry {
   id: string
   authorEmail: string
+  authorName?: string
   timestamp: string        // ISO
   type: string
   content: string

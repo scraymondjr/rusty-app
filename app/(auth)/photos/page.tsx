@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { PageShell } from '@/components/page-shell'
+
+export const dynamic = 'force-dynamic'
 import { EmptyState } from '@/components/ui/empty-state'
 import { getPhotos } from '@/lib/db/photos'
 import { PhotoUpload } from './photo-upload'

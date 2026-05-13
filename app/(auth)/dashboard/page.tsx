@@ -33,16 +33,20 @@ export default async function DashboardPage() {
     (m) => m.refillsRemaining !== undefined && m.refillsRemaining <= 2,
   )
 
+  const canSeeMedical = session && ['owner', 'family', 'vet'].includes(session.role)
+
   const metrics = [
-    {
-      label: 'Last Checkup',
-      value: lastRecord
-        ? new Date(lastRecord.visitDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-        : '—',
-      sub: lastRecord ? lastRecord.reason : 'No records yet',
-      icon: '📅',
-      href: '/medical',
-    },
+    ...(canSeeMedical ? [
+      {
+        label: 'Last Checkup',
+        value: lastRecord
+          ? new Date(lastRecord.visitDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          : '—',
+        sub: lastRecord ? lastRecord.reason : 'No records yet',
+        icon: '📅',
+        href: '/medical',
+      },
+    ] : []),
     {
       label: 'Active Medications',
       value: String(activeMedCount),
@@ -60,20 +64,15 @@ export default async function DashboardPage() {
       href: '/medications',
       alert: !!nextRefill,
     },
-    {
-      label: 'Next Vet Visit',
-      value: '—',
-      sub: 'Not scheduled',
-      icon: '🏥',
-      href: '/medical',
-    },
-    {
-      label: 'Supplies',
-      value: '—',
-      sub: 'Phase 6',
-      icon: '🛒',
-      href: '/dashboard',
-    },
+    ...(canSeeMedical ? [
+      {
+        label: 'Next Vet Visit',
+        value: '—',
+        sub: 'Not scheduled',
+        icon: '🏥',
+        href: '/medical',
+      },
+    ] : []),
   ]
 
   return (

@@ -13,7 +13,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
 
   return (
     <UserProvider user={session}>
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-[100dvh] flex flex-col">
         <EmergencyBanner />
         <div className="flex flex-1 overflow-hidden">
           <Nav />
