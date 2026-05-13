@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Routes that don't require a session cookie
-const PUBLIC_PATHS = new Set(['/', '/access-denied'])
+const PUBLIC_PATHS = new Set(['/', '/login', '/access-denied'])
 const PUBLIC_PREFIXES = ['/api/auth/', '/_next/', '/icons/', '/manifest.json', '/favicon.ico']
 
 export function middleware(request: NextRequest) {
