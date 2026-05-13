@@ -7,7 +7,9 @@ import {
   createMedication,
   updateMedication,
   deleteMedication,
+  getMedication,
 } from '@/lib/db/medications'
+import { deleteStorageFile } from '@/lib/storage'
 
 export async function saveMedication(formData: FormData) {
   await requireRole(['owner', 'vet'])
@@ -60,11 +62,18 @@ export async function toggleMedicationActive(id: string, active: boolean) {
   await requireRole(['owner', 'vet'])
   await updateMedication(id, { active })
   revalidatePath('/medications')
+  revalidatePath(`/medications/${id}`)
   revalidatePath('/dashboard')
 }
 
 export async function removeMedication(id: string) {
   await requireRole(['owner', 'vet'])
+  const med = await getMedication(id)
+  if (med?.sourceArtifact) {
+    await deleteStorageFile(med.sourceArtifact).catch((err) => {
+      console.error('Failed to delete medication storage file:', err)
+    })
+  }
   await deleteMedication(id)
   revalidatePath('/medications')
   revalidatePath('/dashboard')

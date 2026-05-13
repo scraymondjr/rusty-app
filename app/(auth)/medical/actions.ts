@@ -7,7 +7,9 @@ import {
   createMedicalRecord,
   updateMedicalRecord,
   deleteMedicalRecord,
+  getMedicalRecord,
 } from '@/lib/db/medical'
+import { deleteStorageFile } from '@/lib/storage'
 import { addWeightEntry } from '@/lib/db/weight'
 
 export async function saveMedicalRecord(formData: FormData) {
@@ -46,6 +48,12 @@ export async function saveMedicalRecord(formData: FormData) {
 
 export async function removeMedicalRecord(id: string) {
   await requireRole(['owner', 'vet'])
+  const record = await getMedicalRecord(id)
+  if (record?.sourceArtifact) {
+    await deleteStorageFile(record.sourceArtifact).catch((err) => {
+      console.error('Failed to delete medical record storage file:', err)
+    })
+  }
   await deleteMedicalRecord(id)
   revalidatePath('/medical')
   revalidatePath('/dashboard')
