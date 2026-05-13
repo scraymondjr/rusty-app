@@ -1,25 +1,53 @@
 'use client'
 
 import { useState } from 'react'
+import { useUser } from '@/components/user-provider'
 import { updateCareInstructions } from './actions'
 import type { CareInstructions } from '@/types/db'
 
 const inputClass = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent'
 const labelClass = 'block text-sm font-medium text-gray-700 mb-1'
 
+function ReadOnlyField({ label, value, placeholder }: { label: string; value?: string; placeholder: string }) {
+  return (
+    <div>
+      <p className={labelClass}>{label}</p>
+      <p className="text-sm text-gray-700 whitespace-pre-wrap">{value || <span className="text-gray-400">{placeholder}</span>}</p>
+    </div>
+  )
+}
+
 export function CareForm({ initialData }: { initialData: CareInstructions | null }) {
+  const { role } = useUser()
+  const canEdit = role === 'owner' || role === 'family'
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleAction = async (formData: FormData) => {
     setSaving(true)
+    setError(null)
     try {
       await updateCareInstructions(formData)
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Save failed. Please try again.')
     } finally {
       setSaving(false)
     }
+  }
+
+  if (!canEdit) {
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
+        <ReadOnlyField label="Feeding" value={initialData?.feeding} placeholder="No feeding instructions yet." />
+        <ReadOnlyField label="Walks" value={initialData?.walks} placeholder="No walk instructions yet." />
+        <ReadOnlyField label="Quirks & Behavior" value={initialData?.quirks} placeholder="No quirks noted." />
+        <ReadOnlyField label="Where Things Are" value={initialData?.whereThingsAre} placeholder="Not specified." />
+        <ReadOnlyField label="Notes" value={initialData?.notes} placeholder="No additional notes." />
+      </div>
+    )
   }
 
   return (
@@ -49,6 +77,7 @@ export function CareForm({ initialData }: { initialData: CareInstructions | null
         <textarea id="care-notes" name="notes" rows={2} defaultValue={initialData?.notes ?? ''}
           placeholder="Anything else a sitter should know." className={inputClass} />
       </div>
+      {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex items-center gap-3">
         <button
           type="submit"

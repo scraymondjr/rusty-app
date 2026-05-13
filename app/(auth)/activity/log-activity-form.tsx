@@ -8,12 +8,16 @@ const inputClass = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm f
 export function LogActivityForm() {
   const formRef = useRef<HTMLFormElement>(null)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleAction = async (formData: FormData) => {
     setSaving(true)
+    setError(null)
     try {
       await logActivity(formData)
       formRef.current?.reset()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to log activity. Please try again.')
     } finally {
       setSaving(false)
     }
@@ -38,6 +42,7 @@ export function LogActivityForm() {
         <label htmlFor="activity-content" className="block text-xs font-medium text-gray-700 mb-1">Details</label>
         <textarea id="activity-content" name="content" required rows={3} placeholder="What happened?" className={inputClass} />
       </div>
+      {error && <p className="text-sm text-red-600">{error}</p>}
       <button type="submit" disabled={saving}
         className="bg-brand-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-brand-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors">
         {saving ? 'Logging…' : 'Add Entry'}

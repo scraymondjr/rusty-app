@@ -14,10 +14,15 @@ export async function saveInsurancePolicy(formData: FormData) {
 
   const id = formData.get('id') as string | null
 
+  const provider     = (formData.get('provider') as string)?.trim()
+  const policyNumber = (formData.get('policyNumber') as string)?.trim()
+  if (!provider) throw new Error('Provider is required')
+  if (!policyNumber) throw new Error('Policy number is required')
+
   const data = {
-    provider:     formData.get('provider') as string,
-    policyNumber: formData.get('policyNumber') as string,
-    coverage:     (formData.get('coverage') as string) || undefined,
+    provider,
+    policyNumber,
+    coverage: (formData.get('coverage') as string)?.trim() || undefined,
   }
 
   if (id) {
