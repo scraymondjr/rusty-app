@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PageShell } from '@/components/page-shell'
+import { getSession } from '@/lib/auth/session'
 import { getMedicalRecord } from '@/lib/db/medical'
 import { DeleteButton } from './delete-button'
 
@@ -12,8 +14,9 @@ export default async function MedicalDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const record = await getMedicalRecord(id)
+  const [record, session] = await Promise.all([getMedicalRecord(id), getSession()])
   if (!record) notFound()
+  const canEdit = session && ['owner', 'vet'].includes(session.role)
 
   const visitDate = new Date(record.visitDate).toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
@@ -68,9 +71,17 @@ export default async function MedicalDetailPage({
           </div>
         )}
 
-        <div className="flex gap-3 pt-2 pb-6">
-          <DeleteButton id={id} />
-        </div>
+        {canEdit && (
+          <div className="flex gap-3 pt-2 pb-6">
+            <Link
+              href={`/medical/${id}/edit`}
+              className="bg-brand-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-brand-700 transition-colors"
+            >
+              Edit Record
+            </Link>
+            <DeleteButton id={id} />
+          </div>
+        )}
       </div>
     </PageShell>
   )
