@@ -4,15 +4,15 @@ import type { AccessRole } from '@/types'
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 const ROLE_LABELS: Record<AccessRole, string> = {
-  owner:  'Owner',
+  owner: 'Owner',
   family: 'Family',
-  vet:    'Vet',
+  vet: 'Vet',
   sitter: 'Sitter',
 }
 
 export async function sendInviteEmail(email: string, role: AccessRole) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://rusty.scrjr.com'
-  const from   = process.env.RESEND_FROM ?? 'Rusty <rusty@rusty.scrjr.com>'
+  const from = process.env.RESEND_FROM ?? 'Rusty <rusty@scrjr.com>'
 
   await resend.emails.send({
     from,
