@@ -25,12 +25,18 @@ export async function createSession(idToken: string): Promise<void> {
 export async function getSession(): Promise<(SessionUser & { uid: string }) | null> {
   const cookieStore = await cookies()
   const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value
-  if (!sessionCookie) return null
+  if (!sessionCookie) {
+    console.warn('[getSession] no __session cookie present')
+    return null
+  }
 
   try {
     const decoded = await getAdminAuth().verifySessionCookie(sessionCookie, true)
     const access = await getAccessRecord(decoded.email!)
-    if (!access) return null
+    if (!access) {
+      console.warn('[getSession] no access record for', decoded.email)
+      return null
+    }
     return {
       uid:     decoded.uid,
       email:   decoded.email!,
@@ -38,7 +44,8 @@ export async function getSession(): Promise<(SessionUser & { uid: string }) | nu
       picture: decoded.picture,
       role:    access.role,
     }
-  } catch {
+  } catch (err) {
+    console.warn('[getSession] verifySessionCookie failed:', err instanceof Error ? err.message : err)
     return null
   }
 }
