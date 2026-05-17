@@ -15,7 +15,7 @@ export async function sendInviteEmail(email: string, role: AccessRole) {
   const from = process.env.RESEND_FROM ?? 'Rusty <rusty@scrjr.com>'
 
   try {
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from,
       to: email,
       subject: "You've been invited to Rusty's care dashboard",
@@ -37,6 +37,10 @@ export async function sendInviteEmail(email: string, role: AccessRole) {
       </div>
     `,
     })
+    if (error) {
+      console.error('Resend API error:', error)
+      return { error: 'Failed to send email' }
+    }
   } catch (error) {
     console.error('Error sending email:', error);
     return { error: 'Failed to send email' };
