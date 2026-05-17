@@ -17,9 +17,6 @@ export default async function CarePage() {
     <PageShell title="Care Instructions">
       <div className="max-w-2xl space-y-6">
         <section>
-          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-            Emergency Contacts
-          </h2>
           <EmergencyContactsList contacts={contacts} />
         </section>
 

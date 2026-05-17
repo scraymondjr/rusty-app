@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { FieldValue } from 'firebase-admin/firestore'
 import { requireRole } from '@/lib/auth/authorize'
 import {
   createInsurancePolicy,
@@ -19,16 +20,20 @@ export async function saveInsurancePolicy(formData: FormData) {
   if (!provider) throw new Error('Provider is required')
   if (!policyNumber) throw new Error('Policy number is required')
 
-  const data = {
-    provider,
-    policyNumber,
-    coverage: (formData.get('coverage') as string)?.trim() || undefined,
-  }
+  const coverage = (formData.get('coverage') as string)?.trim()
 
   if (id) {
-    await updateInsurancePolicy(id, data)
+    await updateInsurancePolicy(id, {
+      provider,
+      policyNumber,
+      coverage: (coverage || FieldValue.delete()) as unknown as string,
+    })
   } else {
-    await createInsurancePolicy(data)
+    await createInsurancePolicy({
+      provider,
+      policyNumber,
+      ...(coverage ? { coverage } : {}),
+    })
   }
 
   revalidatePath('/insurance')

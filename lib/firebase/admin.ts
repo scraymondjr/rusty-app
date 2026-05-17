@@ -17,6 +17,16 @@ function getAdminApp(): App {
   })
 }
 
+let dbInitialized = false
+function getDb() {
+  const db = getFirestore(getAdminApp())
+  if (!dbInitialized) {
+    db.settings({ ignoreUndefinedProperties: true })
+    dbInitialized = true
+  }
+  return db
+}
+
 export const getAdminAuth    = () => getAuth(getAdminApp())
-export const getAdminDb      = () => getFirestore(getAdminApp())
+export const getAdminDb      = () => getDb()
 export const getAdminStorage = () => getStorage(getAdminApp())
