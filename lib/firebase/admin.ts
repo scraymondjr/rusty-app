@@ -17,12 +17,12 @@ function getAdminApp(): App {
   })
 }
 
-let dbInitialized = false
 function getDb() {
   const db = getFirestore(getAdminApp())
-  if (!dbInitialized) {
+  try {
     db.settings({ ignoreUndefinedProperties: true })
-    dbInitialized = true
+  } catch {
+    // settings() throws once the client has been used — safe to ignore on subsequent calls
   }
   return db
 }
