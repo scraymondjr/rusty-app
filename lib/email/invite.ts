@@ -14,11 +14,12 @@ export async function sendInviteEmail(email: string, role: AccessRole) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://rusty.scrjr.com'
   const from = process.env.RESEND_FROM ?? 'Rusty <rusty@scrjr.com>'
 
-  await resend.emails.send({
-    from,
-    to: email,
-    subject: "You've been invited to Rusty's care dashboard",
-    html: `
+  try {
+    await resend.emails.send({
+      from,
+      to: email,
+      subject: "You've been invited to Rusty's care dashboard",
+      html: `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
         <h2 style="margin:0 0 8px">You're invited 🐾</h2>
         <p style="color:#555;margin:0 0 16px">
@@ -35,5 +36,9 @@ export async function sendInviteEmail(email: string, role: AccessRole) {
         </p>
       </div>
     `,
-  })
+    })
+  } catch (error) {
+    console.error('Error sending email:', error);
+    return { error: 'Failed to send email' };
+  }
 }
